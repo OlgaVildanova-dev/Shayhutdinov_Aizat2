@@ -1,54 +1,37 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 import json
-import re
+import os
+from datetime import datetime
+import pandas as pd
 
-class WeatherDiaryApp:
+DATA_FILE = "expenses.json"
+
+class ExpenseTrackerApp:
     def __init__(self, root):
         self.root = root
-        self.records = []
-        # ... создание виджетов, привязка методов к кнопкам
+        self.root.title("Expense Tracker")
+        self.root.geometry("800x500")
 
-    def add_record(self):
-        date = self.date_entry.get()
-        temp = self.temp_entry.get()
-        desc = self.desc_entry.get()
-        precip = self.precip_var.get()
-        # Валидация ввода
-        if not self.validate_input(date, temp, desc):
-            return
-        self.records.append({
-            "date": date,
-            "temperature": float(temp),
-            "description": desc,
-            "precipitation": precip == 1
-        })
-        self.update_list()
+        self.create_widgets()
+        self.load_data()
+        self.update_table()
 
-    def validate_input(self, date, temp, desc):
-        if not re.match(r"\d{2}.\d{2}.\d{4}", date):
-            messagebox.showerror("Ошибка", "Неверный формат даты (ДД.ММ.ГГГГ)")
-            return False
-        try:
-            float(temp)
-        except ValueError:
-            messagebox.showerror("Ошибка", "Температура должна быть числом")
-            return False
-        if not desc:
-            messagebox.showerror("Ошибка", "Описание не может быть пустым")
-            return False
-        return True
+    def create_widgets(self):
+        # Поля ввода
+        ttk.Label(self.root, text="Сумма:").grid(row=0, column=0, padx=10, pady=5)
+        self.amount_entry = ttk.Entry(self.root)
+        self.amount_entry.grid(row=0, column=1, padx=10, pady=5)
 
-    def save_to_json(self):
-        with open("data/records.json", "w") as f:
-            json.dump(self.records, f, ensure_ascii=False, indent=4)
+        ttk.Label(self.root, text="Категория:").grid(row=1, column=0, padx=10, pady=5)
+        self.category_entry = ttk.Entry(self.root)
+        self.category_entry.grid(row=1, column=1, padx=10, pady=5)
 
-    def load_from_json(self):
-        try:
-            with open("data/records.json", "r") as f:
-                self.records = json.load(f)
-                self.update_list()
-        except FileNotFoundError:
-            messagebox.showinfo("Информация", "Файл данных не найден")
+        ttk.Label(self.root, text="Дата (ГГГГ-ММ-ДД):").grid(row=2, column=0, padx=10, pady=5)
+        self.date_entry = ttk.# Expense Tracker — пошаговая инструкция по созданию
 
-    # ... методы фильтрации, обновления списка и т.д.
+В этом руководстве подробно описан процесс создания приложения для учёта личных расходов с графическим интерфейсом на Python. Программа будет поддерживать фильтрацию, подсчёт суммы за период, сохранение данных в JSON, валидацию ввода и работу с Git.
+
+## 1. Установка зависимостей
+
+Для реализации GUI используем библиотеку `tkinter`, для работы с датами — `datetime`, для JSON — стандартную библиотеку, для фильтрации — `pandas`.
